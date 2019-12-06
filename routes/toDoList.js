@@ -4,7 +4,7 @@ const Item = require("../models/schema");
 
 //get all items
 router.get("/items", (req, res) => {
-  try { 
+  try {
       let filterparams = {};
       let sortparams = {};
     
@@ -22,9 +22,8 @@ router.get("/items", (req, res) => {
         }
         res.status(200).send({ data: items });
       });
-
   } catch (error) {
-      res.status(400).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -65,7 +64,7 @@ router.delete("/items/:id", (req, res) => {
         if (err) {
           console.log(err);
         }
-        res.send('item deleted');
+        res.status(200).send('item deleted');
       });
   } catch (error) {
       res.status(400).send(error);
@@ -81,7 +80,6 @@ router.put("/items/:id", (req, res) => {
         if (err) {
           console.log(err);
         }
-
         res.send({ data: item });
       });
   } catch (error) {
