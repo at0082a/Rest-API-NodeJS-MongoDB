@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const validates = require('../routes/userAuth');
 const Item = require("../models/schema");
 
 //get all items
-router.get("/items", (req, res) => {
+router.get("/items", validates('basic', {session: false}), (req, res) => {
   try {
       let filterparams = {};
       let sortparams = {};
@@ -28,7 +29,7 @@ router.get("/items", (req, res) => {
 });
 
 //get individual item
-router.get("/items/:id", (req, res) => {
+router.get("/items/:id", validates('basic', {session: false}), (req, res) => {
   try {
       let { id } = req.params;
       Item.findById(id).then((item, err) => {
@@ -57,7 +58,7 @@ router.post("/items", (req, res) => {
 });
 
 //delete item
-router.delete("/items/:id", (req, res) => {
+router.delete("/items/:id", validates('basic', {session: false}), (req, res) => {
   try {
       let { id } = req.params;
       Item.deleteOne({ "_id" : id }).then((item, err) => {
@@ -73,7 +74,7 @@ router.delete("/items/:id", (req, res) => {
 
 //edit item
 
-router.put("/items/:id", (req, res) => { 
+router.put("/items/:id", validates('basic', {session: false}), (req, res) => { 
   try {
       let { id } = req.params;
       Item.findOneAndUpdate({"_id" : id }, req.body, { new: true } ).then((item, err) => {
