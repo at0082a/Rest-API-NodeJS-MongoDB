@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-let ItemSchema = new Schema ({
-    title: String,
-    description: String,
-    status: String,
-    duedate: Date,
-    subtasks: [ { type: String, required: false} ]
-  }, { versionKey: false 
+const ItemSchema = new Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    status: { type: String, required: true },
+    duedate: { type: Date, required: true },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
 });
 
 const Item = mongoose.model('item', ItemSchema);

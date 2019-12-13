@@ -6,6 +6,13 @@ const mongoose = require("mongoose");
 const config = require('config');
 
 const port = process.env.PORT || 3001;
+const cookieSession = require('cookie-session');
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2'],
+  maxAge: 24 * 60 * 60 * 1000
+}));
 
 mongoose.connect('mongodb://localhost:27017/todolistitems', {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;

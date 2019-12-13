@@ -1,16 +1,20 @@
 const mongoose = require('mongoose');
-// const validator = require('validator');
+const Schema = mongoose.Schema;
 const joi = require('joi');
 
-const userSchema = mongoose.Schema({
-  email: {
-      type: String,
-      required: true
-  },
-  password: {
-      type: String,
-      required: true
-  }
+const userSchema = new Schema({
+    email: {
+        type: String,
+        required: true
+    }, 
+    password: {
+        type: String,
+        required: true
+    },  
+    todos: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Item'
+    }]
 });
 
 const validateUser = (user) => {

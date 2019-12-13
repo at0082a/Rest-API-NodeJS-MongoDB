@@ -1,30 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Item = require("../models/schema");
+const { User } = require("../models/users");
+const mongoose = require("mongoose");
+let ObjectId = mongoose.Types.ObjectId;
 
-
-router.get("/items", (req, res) => {
-  try {
-      let filterparams = {};
-      let sortparams = {};
-    
-      for (let query in req.query) {
-        if (query === "sortBy") {
-          sortparams = req.query.sortBy;
-        } else {
-          filterparams[query] = req.query[query];
-        }
-      }
-      Item.find(filterparams).sort(sortparams)
-      .then((items, err) => {
-        if (err) {
-          console.log(err);
-        }
-        res.status(200).send({ data: items });
-      });
-  } catch (error) {
-    res.status(400).send(error);
-  }
+router.get("/items", async (req, res) => {
+  let findUser = await User.findById(req.session.user_id );
+  res.send({data: findUser});
 });
 
 //get individual item
@@ -44,16 +27,32 @@ router.get("/items/:id", (req, res) => {
 
 //create new item
 router.post("/items", (req, res) => {
-  try { 
-      Item.create(req.body).then((item, err) =>  {
-        if (err) {
-          console.log(err);
-        }
-        res.status(200).send({ data: item });
-      });
-  } catch (error) {
-      res.status(400).send(error);
-  }
+  console.log(req.session.user_id);
+  User.findById(req.session.user_id, (err, user) => {
+      if (err) throw new Error(err);  
+      console.log("this is the second userrr", user);
+  //     // We create an object containing the data from our post request
+    const newToDo = 
+    {
+      title: req.body.title,
+      description: req.body.description,
+      duedate: req.body.duedate,
+      status: req.body.status,
+      author: new ObjectId(req.session.user_id)
+    };
+
+    console.log(typeof(newToDo));
+
+  Item.create(newToDo, (err, todo) =>  {
+    if (err) {
+      console.log(err);
+    }
+    user.todos.push(newToDo);
+    user.save((err) => {
+      return res.status(200),send({data: todo});
+    });
+   });
+  });  
 });
 
 //delete item
