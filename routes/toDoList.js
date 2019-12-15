@@ -29,7 +29,6 @@ router.get("/items/:id", (req, res) => {
   let todoId = req.params.id;
   User.findById(req.session.user_id, async (err, user) => {
     console.log("this is the ussserrrr", user);
-    let todos = user.todos;
     //search the todos array in user to find the todo item
       await Item.findById(todoId, (err, item) => {
         if (err) {
@@ -67,9 +66,7 @@ router.post("/items", (req, res) => {
       user.save((err) => {
         if (err) {
           console.log(err);
-        } 
-        // res.status(200).send(newToDo);
-        console.log(user);
+        }
       });
     });
    });
@@ -77,17 +74,22 @@ router.post("/items", (req, res) => {
 
 //delete item
 router.delete("/items/:id", (req, res) => {
-  try {
-      let { id } = req.params;
-      Item.deleteOne({ "_id" : id }).then((item, err) => {
+  let todoId = req.params.id;
+  User.findById(req.session.user_id, async (err, user) => {
+    if (err) console.log(err);
+    //search the todos array in user to find the todo item
+      await Item.deleteOne(({ "_id" : todoId }), (err, item) => { 
         if (err) {
           console.log(err);
         }
-        res.status(200).send('item deleted');
+        user.save((err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+        res.status(200).send({data: "item deleteeeddd"});
       });
-  } catch (error) {
-      res.status(400).send(error);
-  }
+  }); 
 });
 
 //edit item
