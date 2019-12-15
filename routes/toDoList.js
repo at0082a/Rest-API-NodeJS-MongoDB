@@ -4,12 +4,13 @@ const Item = require("../models/schema");
 const { User } = require("../models/users");
 const mongoose = require("mongoose");
 let ObjectId = mongoose.Types.ObjectId;
-
+//get all todos
 router.get("/items", (req, res) => {
   User.findById(req.session.user_id, async (err, user) => {
     const arr = [];
     console.log("this is the ussserrrr", user);
     let todos = user.todos;
+    //search the todos array in user to find the 
     for (let todo of todos) {
       await Item.findById(todo, (err, item) => {
         if (err) {
@@ -22,32 +23,21 @@ router.get("/items", (req, res) => {
     res.send({data: arr});
   }); 
 });
-  // User.findById(req.session.user_id).populate('todos').exec((err, user) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     res.status(200).json(user);
-  //   }
-  // });
-  // .exec((err, todos) => {
-  //   if (err) console.log(err);
-  //   console.log("these are the todoss", todos);
-  //   res.status(200).send({data: todos})
-  // });
 
 //get individual item
 router.get("/items/:id", (req, res) => {
-  try {
-      let { id } = req.params;
-      Item.findById(id).then((item, err) => {
+  let todoId = req.params.id;
+  User.findById(req.session.user_id, async (err, user) => {
+    console.log("this is the ussserrrr", user);
+    let todos = user.todos;
+    //search the todos array in user to find the todo item
+      await Item.findById(todoId, (err, item) => {
         if (err) {
           console.log(err);
         }
-        res.status(200).send({ data: item });
+        res.status(200).send({data: item});
       });
-  } catch (error) {
-      res.status(400).send(error);
-  }
+  }); 
 });
 
 //create new item
@@ -65,7 +55,7 @@ router.post("/items", (req, res) => {
     author: req.session.user_id,
     duedate: req.body.duedate
   };
-  //create new item and push the id to the todos array of the user
+  //create new item and push the id to the todos array of the user. save the user to add the new todo id to the todos array in user
   await Item.create(newToDo, (err, item) =>  {
     if (err) {
       console.log(err);
