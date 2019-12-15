@@ -29,7 +29,7 @@ router.post('/auth', async (req, res) => {
   if (user) {
   req.session.user_id = user._id;
   }
-
+  console.log(user);
   console.log(req.session.user_id);
 
   res.status(200).send("User logged in");
