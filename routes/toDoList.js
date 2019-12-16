@@ -4,11 +4,11 @@ const Item = require("../models/schema");
 const { User } = require("../models/users");
 const mongoose = require("mongoose");
 let ObjectId = mongoose.Types.ObjectId;
+
 //get all todos
 router.get("/items", (req, res) => {
   User.findById(req.session.user_id, async (err, user) => {
     const arr = [];
-    console.log("this is the ussserrrr", user);
     let todos = user.todos;
     //search the todos array in user to find the 
     for (let todo of todos) {
@@ -17,7 +17,6 @@ router.get("/items", (req, res) => {
           console.log(err);
         }
         arr.push(item);
-        console.log("this is arrrrr", arr);
       });
     }
     res.send({data: arr});
@@ -54,6 +53,7 @@ router.post("/items", (req, res) => {
     author: req.session.user_id,
     duedate: req.body.duedate
   };
+
   //create new item and push the id to the todos array of the user. save the user to add the new todo id to the todos array in user
   await Item.create(newToDo, (err, item) =>  {
     if (err) {
@@ -82,12 +82,18 @@ router.delete("/items/:id", (req, res) => {
         if (err) {
           console.log(err);
         }
+        for (let i = 0; i < user.todos.length; i++) {
+            if (user.todos[i]._id == todoId) {
+              user.todos.splice(i, 1);
+            }
+        }
+        console.log('after deletion', user.todos);
+        res.status(200).send({data: "item deleteeeddd"});
         user.save((err) => {
           if (err) {
             console.log(err);
           }
         });
-        res.status(200).send({data: "item deleteeeddd"});
       });
   }); 
 });
