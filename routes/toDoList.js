@@ -101,24 +101,16 @@ router.delete("/items/:id", (req, res) => {
 //edit item
 
 router.put("/items/:id", (req, res) => { 
-  try {
-      let { id } = req.params;
-      Item.findOneAndUpdate({"_id" : id }, req.body, { new: true } ).then((item, err) => {
+  let todoId = req.params.id;
+  User.findById(req.session.user_id, async (err, user) => {
+    if (err) console.log(err);
+      await Item.findOneAndUpdate({"_id" : todoId }, req.body, { new: true } ).then((item, err) => {
         if (err) {
           console.log(err);
         }
         res.send({ data: item });
       });
-  } catch (error) {
-      res.status(400).send(error);
-  }
+  }); 
 });
-
-//authentication
-
-// router.get('/auth', passport.authenticate('basic', { session: false }), (req, res) => {
-//   console.log('hiiiiii');
-//   res.send('You have been authenticated' + req.user.username);
-// });
 
 module.exports = router;
